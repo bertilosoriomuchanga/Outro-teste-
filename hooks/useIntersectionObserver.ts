@@ -13,28 +13,25 @@ export const useIntersectionObserver = (
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          // Optional: unobserve after it becomes visible to avoid re-triggering
-          // observer.unobserve(entry.target);
+          // Optimization: stop observing the element once it's visible
+          observer.unobserve(entry.target);
         }
       },
-      {
-        ...options,
-      }
+      options
     );
 
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
+    observer.observe(node);
 
+    // Cleanup function to disconnect the observer when the component unmounts
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
+      observer.disconnect();
     };
   }, [ref, options]);
 
