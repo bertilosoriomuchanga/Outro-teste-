@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, RefObject } from 'react';
 
 type IntersectionObserverOptions = {
